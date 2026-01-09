@@ -4,7 +4,6 @@ public static class Menu
 {
     public static void Exec()
     {
-       
         var selection = 1;
         while (selection is not 0)
         {
