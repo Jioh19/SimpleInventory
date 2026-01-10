@@ -93,15 +93,16 @@ public static class Validator
         {
             var input = Console.ReadLine();
 
-            if (input != null && input.Equals("y"))
+            switch (input)
             {
-                return true;
+                case "y":
+                    return true;
+                case "n":
+                    return false;
+                default:
+                    Console.WriteLine("Input must be 'y' or 'n'");
+                    break;
             }
-            else if (input != null && input.Equals("n"))
-            {
-                return false;
-            }
-            Console.WriteLine("Input must be 'y' or 'n'");
         }
     }
 }
