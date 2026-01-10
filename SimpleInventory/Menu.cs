@@ -1,8 +1,8 @@
 ﻿namespace SimpleInventory;
 
-public static class Menu
+public class Menu(Inventory inventory)
 {
-    public static void Exec()
+    public void Exec()
     {
         var selection = 1;
         while (selection is not 0)
@@ -14,134 +14,156 @@ public static class Menu
             Console.WriteLine("4. Remove Product");
             Console.WriteLine("5. Update Product");
             Console.WriteLine("0. Exit");
-            string? input;
-            input = Console.ReadLine();
-            if (int.TryParse(input, out selection))
+            selection = Validator.ReadInt(true);
+
+            switch (selection)
             {
-                switch (selection)
+                case 0:
+                    Console.WriteLine("Exiting");
+                    break;
+                case 1:
+                    GetProducts();
+                    break;
+                case 2:
+                    GetProductByName();
+                    break;
+                case 3:
+                    AddProduct();
+                    break;
+                case 4:
+                    RemoveProduct();
+                    break;
+                case 5:
+                    UpdateProduct();
+                    break;
+                default:
                 {
-                    case 0:
-                        Console.WriteLine("Exiting");
-                        break;
-                    case 1:
-                        GetProducts();
-                        break;
-                    case 2:
-                        GetProductByName();
-                        break;
-                    case 3:
-                        AddProduct();
-                        break;
-                    case 4:
-                        RemoveProduct();
-                        break;
-                    case 5:
-                        UpdateProduct();
-                        break;
-                    default:
-                    {
-                        Console.WriteLine("Invalid selection");
-                        break;
-                    }
+                    Console.WriteLine("Invalid selection");
+                    break;
                 }
             }
             Console.WriteLine();
         }
     }
 
-    private static void GetProducts()
+    private void GetProducts()
     { 
-        Inventory.GetProducts();
-    }
-    
-    private static void GetProductByName()
-    {
-        Console.Write("Enter the product name: "); 
-        var input = Console.ReadLine();
-        if (!string.IsNullOrEmpty(input))
+        var products = inventory.GetProducts();
+        if (products.Count is 0)
         {
-            Console.WriteLine(Inventory.GetProduct(input));
+            Console.WriteLine("No products in inventory");
         }
         else
         {
-            Console.WriteLine("Input cannot be empty");
+            products.ForEach(Console.WriteLine);
+        }
+    }
+    
+    private void GetProductByName()
+    {
+        Console.WriteLine("Enter the product name: ");
+        var name = Validator.ReadString();
+        if (name is null)
+        {
+            return;
+        }
+        var product = inventory.GetProduct(name);
+        
+        if (product is not null)
+        {
+            Console.WriteLine(product);
+        }
+        else
+        {
+            Console.WriteLine("Product not found");
         }
     }
 
-    private static void AddProduct()
+    private void AddProduct()
     {
         var product = CreateProduct();
-        Inventory.AddProduct(product);
+        if (product is not null)
+        {
+            inventory.AddProduct(product);
+            Console.WriteLine("Product added successfully");
+        }
+        else
+        {
+            Console.WriteLine("Product creation cancelled");
+        }
     }
 
-    private static Product CreateProduct()
+    private Product? CreateProduct()
     {
-
-        string name;
-        decimal price;
-        int quantity;
-        while (true)
+        Console.WriteLine("Enter the product name: ");
+        var name = Validator.ReadString();
+        if (name is null)
         {
-            Console.Write("Enter the product name: ");
-            var input = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(input))
-            {
-                name = input;
-                break;
-            }
+            return null;
+        }
 
-            Console.WriteLine("Name cannot be empty or whitespace");
-        }
-        while (true)
+        Console.WriteLine("Enter the product price: ");
+        var price = Validator.ReadDecimal();
+        if (price is 0)
         {
-            Console.Write("Enter the product price: ");
-            var input = Console.ReadLine();
-            if (decimal.TryParse(input, out price))
-            {
-                break;
-            }
-
-            Console.WriteLine("Price must be a number");
+            return null;
         }
-        while (true)
+        
+        Console.WriteLine("Enter the product quantity: ");
+        var quantity = Validator.ReadInt(false);
+        if (quantity is 0)
         {
-            Console.Write("Enter the product quantity: ");
-            var input = Console.ReadLine();
-            if (int.TryParse(input, out quantity))
-            {
-                break;
-            }
-            Console.WriteLine("Quantity must be a number");
+            return null;
         }
+        
         return new Product(name, price, quantity);
     }
     
-    private static void RemoveProduct()
+    private void RemoveProduct()
     {
-        while (true)
+
+        Console.WriteLine("Enter the product name: ");
+        var name = Validator.ReadString();
+        if (name is null)
         {
-            Console.Write("Enter the product name: ");
-            var input = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(input))
-            {
-                Inventory.RemoveProduct(input);
-                break;
-            }
-            Console.WriteLine("Name cannot be empty or whitespace");
+            return;
         }
+
+        if (inventory.GetProduct(name) is null)
+        {
+            Console.WriteLine("Product not found");
+            return;
+        }
+        inventory.RemoveProduct(name);
+        Console.WriteLine("Product removed successfully");
+
     }
     
-    private static void UpdateProduct()
+    private void UpdateProduct()
     {
-        Console.Write("Enter the product name: "); 
-        var input = Console.ReadLine();
-        if (!string.IsNullOrEmpty(input))
+        Console.WriteLine("Enter the product name: ");
+        var name = Validator.ReadString();
+        if (name is null)
         {
-            var product = Inventory.GetProduct(input);
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(name))
+        {
+            var product = inventory.GetProduct(name);
             if (product is not null)
             {
                 Console.WriteLine("Enter the updated product details");
-                Inventory.UpdateProduct(input, CreateProduct());
+                var updatedProduct = CreateProduct();
+                if (updatedProduct is not null)
+                {
+                    inventory.UpdateProduct(name, updatedProduct);
+                    Console.WriteLine("Product updated successfully");
+                }
+                else
+                {
+                    Console.WriteLine("Product update cancelled");
+                }
             }
             else
             {

@@ -1,4 +1,6 @@
 ﻿
 using SimpleInventory;
 
-Menu.Exec();
+var inventory = new Inventory();
+var menu = new Menu(inventory);
+menu.Exec();
