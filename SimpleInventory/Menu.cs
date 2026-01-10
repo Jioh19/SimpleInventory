@@ -147,32 +147,48 @@ public class Menu(Inventory inventory)
         {
             return;
         }
-
-        if (!string.IsNullOrEmpty(name))
+        
+        var product = inventory.GetProduct(name);
+        if (product is not null)
         {
-            var product = inventory.GetProduct(name);
-            if (product is not null)
+            Console.WriteLine(product);
+            var modify = Validator.ReadBool("name");
+            if (modify)
             {
-                Console.WriteLine("Enter the updated product details");
-                var updatedProduct = CreateProduct();
-                if (updatedProduct is not null)
+                Console.WriteLine("Enter the new product name: ");
+                var newName = Validator.ReadString();
+                if (newName is null)
                 {
-                    inventory.UpdateProduct(name, updatedProduct);
-                    Console.WriteLine("Product updated successfully");
+                    return;
                 }
-                else
-                {
-                    Console.WriteLine("Product update cancelled");
-                }
+                product.Name = newName;
             }
-            else
+            modify = Validator.ReadBool("price");
+            if (modify)
             {
-                Console.WriteLine("Product not found");
+                Console.WriteLine("Enter the new product price: ");
+                var newPrice = Validator.ReadDecimal();
+                if (newPrice is 0)
+                {
+                    return;
+                }
+                product.Price = newPrice;
+            }
+            modify = Validator.ReadBool("quantity");
+            if (modify)
+            {
+                Console.WriteLine("Enter the new product quantity: ");
+                var newQuantity = Validator.ReadInt(false);
+                if (newQuantity is 0)
+                {
+                    return;
+                }
+                product.Quantity = newQuantity;
             }
         }
         else
         {
-            Console.WriteLine("Input cannot be empty");
+            Console.WriteLine("Product not found");
         }
     }
 }

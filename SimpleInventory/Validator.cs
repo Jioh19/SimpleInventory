@@ -85,5 +85,24 @@ public static class Validator
             }
         }
     }
+
+    public static bool ReadBool(string field)
+    {
+        Console.WriteLine($"Update {field}? (y/n): ");
+        while (true)
+        {
+            var input = Console.ReadLine();
+
+            if (input != null && input.Equals("y"))
+            {
+                return true;
+            }
+            else if (input != null && input.Equals("n"))
+            {
+                return false;
+            }
+            Console.WriteLine("Input must be 'y' or 'n'");
+        }
+    }
 }
 
