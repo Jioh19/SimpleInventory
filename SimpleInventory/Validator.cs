@@ -13,7 +13,7 @@ public static class Validator
         {
             var input = Console.ReadLine();
 
-            if (input != null && input.Equals(Command))
+            if (input is Command)
             {
                 return null;
             }
@@ -35,7 +35,7 @@ public static class Validator
         {
             var input = Console.ReadLine();
 
-            if (input != null && input.Equals(Command))
+            if (input is Command)
             {
                 return 0;
             }
@@ -66,7 +66,7 @@ public static class Validator
         {
             var input = Console.ReadLine();
 
-            if (input != null && input.Equals(Command))
+            if (input is Command)
             {
                 return 0;
             }
